@@ -2,43 +2,28 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>AI Интерьер</title>
+  <title>AI Дизайн комнаты</title>
   <style>
     body {
       font-family: sans-serif;
+      text-align: center;
       max-width: 600px;
       margin: 30px auto;
-      text-align: center;
     }
-    #preview {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 10px;
-    }
-    #result {
-      max-width: 100%;
-      margin-top: 20px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
+    button { padding: 10px 20px; margin-top: 15px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>AI Дизайн комнаты</h1>
-  <p>Загрузи фото своей комнаты — нейросеть сделает редизайн</p>
+  <h1>AI дизайн комнаты</h1>
+  <p>Загрузи фото — получи редизайн интерьера</p>
 
-  <input type="file" id="fileInput" accept="image/*"><br>
-  <img id="preview" src="" alt="Предпросмотр" hidden>
-  <button id="generateBtn" disabled>Создать новый дизайн</button>
+  <input type="file" id="fileInput" accept="image/*">
+  <img id="preview" hidden>
+  <button id="generateBtn" disabled>Сделать редизайн</button>
 
   <h3>Результат:</h3>
-  <img id="result" src="" alt="AI результат" hidden>
+  <img id="result" hidden>
 
   <script>
     const fileInput = document.getElementById('fileInput');
@@ -56,27 +41,26 @@
 
     button.addEventListener('click', async () => {
       const file = fileInput.files[0];
-      if (!file) return alert('Сначала выбери фото!');
+      if (!file) return alert('Выбери фото!');
       button.textContent = 'Генерация...';
       button.disabled = true;
 
+      // используем готовый публичный API (Replicate)
       const formData = new FormData();
-      formData.append('image', file);
-      formData.append('room', 'bedroom');
-      formData.append('theme', 'modern');
+      formData.append("image", file);
 
       try {
-        const res = await fetch('http://localhost:8000/generate', {
-          method: 'POST',
+        const res = await fetch("https://replicate-api-proxy.glitch.me/generate", {
+          method: "POST",
           body: formData
         });
         const data = await res.json();
-        result.src = data.imageUrl;
+        result.src = data.output_url;
         result.hidden = false;
       } catch (err) {
-        alert('Ошибка при запросе к API: ' + err);
+        alert("Ошибка: " + err);
       } finally {
-        button.textContent = 'Создать новый дизайн';
+        button.textContent = "Сделать редизайн";
         button.disabled = false;
       }
     });
