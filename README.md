@@ -66,7 +66,7 @@
       formData.append('theme', 'modern');
 
       try {
-        const res = await fetch('https://api.roomgpt.io/api/v1/rooms', {
+        const res = await fetch('http://localhost:8000/generate', {
           method: 'POST',
           body: formData
         });
